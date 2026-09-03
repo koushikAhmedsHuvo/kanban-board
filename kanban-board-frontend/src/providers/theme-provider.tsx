@@ -9,3 +9,5 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     </NextThemesProvider>
   );
 }
+
+export { ThemeProvider as AppThemeProvider };

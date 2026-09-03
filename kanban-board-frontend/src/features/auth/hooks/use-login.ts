@@ -1,7 +1,7 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 
 import { login } from "../api/login";
 import { useAuthStore } from "@/store/auth.store";

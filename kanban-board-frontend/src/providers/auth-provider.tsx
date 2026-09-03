@@ -1,12 +1,13 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { LoaderCircle } from "lucide-react";
 
 import { useMe } from "@/features/auth/hooks/use-me";
 import { useAuthStore } from "@/store/auth.store";
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const [mounted, setMounted] = useState(false);
   const token = useAuthStore((state) => state.token);
   const setUser = useAuthStore((state) => state.setUser);
   const logout = useAuthStore((state) => state.logout);
@@ -15,12 +16,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const { data: user, isLoading, isError } = useMe();
 
   useEffect(() => {
+    setMounted(true);
     if (user) setUser(user);
     if (isError) logout();
     if (!token || !isLoading) setRestoring(false);
   }, [user, isError, isLoading, token, setUser, logout, setRestoring]);
 
-  if (isRestoring) {
+  if (!mounted || isRestoring) {
     return <div className="flex min-h-screen items-center justify-center"><LoaderCircle className="size-6 animate-spin text-primary" /></div>;
   }
 

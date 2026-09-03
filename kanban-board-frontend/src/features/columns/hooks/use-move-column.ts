@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { moveColumn } from "../api/move-column";
 import { COLUMN_KEYS } from "./use-columns";
 import type { Column } from "../types/column.types";

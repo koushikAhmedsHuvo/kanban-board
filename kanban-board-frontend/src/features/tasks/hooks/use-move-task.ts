@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { moveTask } from "../api/move-task";
 import { TASK_KEYS } from "./use-column-tasks";
 import type { Task } from "../types/task.types";

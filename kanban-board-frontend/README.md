@@ -1,34 +1,41 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Kanban Board Frontend
 
-## Getting Started
+Production-ready Next.js frontend for the Kanban Board API.
 
-First, run the development server:
+## Setup
 
 ```bash
+npm install
+cp .env.example .env.local
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Set `NEXT_PUBLIC_API_URL` to the running NestJS API URL. The frontend validates this value at startup.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Scripts
 
-## Learn More
+- `npm run dev`: start the development server
+- `npm run lint`: run ESLint
+- `npm run test`: run Vitest component and utility tests
+- `npm run test:e2e`: run Playwright browser tests
+- `npm run build`: create a production build
+- `npm start`: serve the production build
 
-To learn more about Next.js, take a look at the following resources:
+## Deployment
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Deploy the `kanban-board-frontend` directory as a Next.js project on Vercel. Add `NEXT_PUBLIC_API_URL` in Vercel Project Settings for Preview and Production environments, then redeploy. Configure the API server CORS policy to allow the deployed frontend origin.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The checked-in `.env.production` file is a placeholder only. Replace its value through your deployment environment settings; do not commit credentials or private API keys.
 
-## Deploy on Vercel
+## Architecture
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- `src/app`: App Router pages and route boundaries
+- `src/features`: domain features for auth, boards, members, columns, tasks, and search
+- `src/components`: shared UI, loading, error, theme, and dialog primitives
+- `src/lib`: Axios, query client, toast, analytics, and utility modules
+- `src/test`: Vitest setup and component/behavior tests
+- `e2e`: Playwright smoke tests
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Quality
+
+The production gate is TypeScript, ESLint, Vitest, and `npm run build`. API failures are surfaced with friendly retry states and standardized Sonner notifications. Auth state is persisted in the client-side store and invalid sessions are cleared by the Axios interceptor.
