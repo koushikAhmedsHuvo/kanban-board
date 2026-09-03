@@ -4,4 +4,48 @@ import { toast } from "@/lib/toast";
 import { moveTask } from "../api/move-task";
 import { TASK_KEYS } from "./use-column-tasks";
 import type { Task } from "../types/task.types";
-export function useMoveTask() { const client = useQueryClient(); return useMutation({ mutationFn: ({ taskId, targetColumnId, targetIndex }: { taskId: string; targetColumnId: string; targetIndex: number }) => moveTask(taskId, { targetColumnId, targetIndex }), onMutate: async ({ taskId, targetColumnId, targetIndex }) => { const snapshots = new Map<string, Task[]>(); const queries = client.getQueriesData<Task[]>({ queryKey: ["tasks"] }); for (const [key, value] of queries) { if (value) snapshots.set(JSON.stringify(key), value); } const source = queries.find(([, tasks]) => tasks?.some((task) => task.id === taskId)); const moving = source?.[1]?.find((task) => task.id === taskId); if (moving && source) { client.setQueryData(source[0], source[1]?.filter((task) => task.id !== taskId)); const targetKey = TASK_KEYS.column(targetColumnId); const target = client.getQueryData<Task[]>(targetKey) ?? []; const next = [...target.filter((task) => task.id !== taskId)]; next.splice(targetIndex, 0, moving); client.setQueryData(targetKey, next); } return { snapshots }; }, onError: (_error, _variables, context) => { context?.snapshots.forEach((value, key) => client.setQueryData(JSON.parse(key) as readonly unknown[], value)); toast.error("Unable to move task"); }, onSuccess: () => toast.success("Task moved"), onSettled: () => client.invalidateQueries({ queryKey: ["tasks"] }) }); }
+export function useMoveTask() {
+  const client = useQueryClient();
+  return useMutation({
+    mutationFn: ({
+      taskId,
+      targetColumnId,
+      targetIndex,
+    }: {
+      taskId: string;
+      targetColumnId: string;
+      targetIndex: number;
+    }) => moveTask(taskId, { targetColumnId, targetIndex }),
+    onMutate: async ({ taskId, targetColumnId, targetIndex }) => {
+      const snapshots = new Map<string, Task[]>();
+      const queries = client.getQueriesData<Task[]>({ queryKey: ["tasks"] });
+      for (const [key, value] of queries) {
+        if (value) snapshots.set(JSON.stringify(key), value);
+      }
+      const source = queries.find(([, tasks]) =>
+        tasks?.some((task) => task.id === taskId),
+      );
+      const moving = source?.[1]?.find((task) => task.id === taskId);
+      if (moving && source) {
+        client.setQueryData(
+          source[0],
+          source[1]?.filter((task) => task.id !== taskId),
+        );
+        const targetKey = TASK_KEYS.column(targetColumnId);
+        const target = client.getQueryData<Task[]>(targetKey) ?? [];
+        const next = [...target.filter((task) => task.id !== taskId)];
+        next.splice(targetIndex, 0, moving);
+        client.setQueryData(targetKey, next);
+      }
+      return { snapshots };
+    },
+    onError: (_error, _variables, context) => {
+      context?.snapshots.forEach((value, key) =>
+        client.setQueryData(JSON.parse(key) as readonly unknown[], value),
+      );
+      toast.error("Unable to move task");
+    },
+    onSuccess: () => toast.success("Task moved"),
+    onSettled: () => client.invalidateQueries({ queryKey: ["tasks"] }),
+  });
+}

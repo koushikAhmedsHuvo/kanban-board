@@ -34,7 +34,8 @@ export const useAuthStore = create<AuthState>()(
       setRestoring: (isRestoring) => set({ isRestoring }),
       logout: () => {
         setAuthCookie(null);
-        if (typeof window !== "undefined") localStorage.removeItem("auth-token");
+        if (typeof window !== "undefined")
+          localStorage.removeItem("auth-token");
         set({ user: null, token: null, isRestoring: false });
       },
     }),

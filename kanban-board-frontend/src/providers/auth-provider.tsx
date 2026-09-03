@@ -23,7 +23,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, [user, isError, isLoading, token, setUser, logout, setRestoring]);
 
   if (!mounted || isRestoring) {
-    return <div className="flex min-h-screen items-center justify-center"><LoaderCircle className="size-6 animate-spin text-primary" /></div>;
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <LoaderCircle className="size-6 animate-spin text-primary" />
+      </div>
+    );
   }
 
   return <>{children}</>;

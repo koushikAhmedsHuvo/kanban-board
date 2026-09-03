@@ -10,7 +10,9 @@ export function useRegister() {
     mutationFn: register,
     onSuccess: () => toast.success("Account created. You can now log in."),
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Unable to register");
+      toast.error(
+        error instanceof Error ? error.message : "Unable to register",
+      );
     },
   });
 }
