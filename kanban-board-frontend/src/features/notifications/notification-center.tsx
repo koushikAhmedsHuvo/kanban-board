@@ -76,7 +76,10 @@ export function NotificationCenter({ boardId }: { boardId: string }) {
             variant="ghost"
             size="sm"
             onClick={() =>
-              queryClient.setQueryData<NotificationItem[]>(NOTIFICATION_KEYS.board(boardId), items.map((item) => ({ ...item, read: true })))
+              queryClient.setQueryData<NotificationItem[]>(
+                NOTIFICATION_KEYS.board(boardId),
+                items.map((item) => ({ ...item, read: true })),
+              )
             }
           >
             <CheckCheck /> Mark all read
@@ -88,9 +91,12 @@ export function NotificationCenter({ boardId }: { boardId: string }) {
               className="block w-full border-t px-1 py-3 text-left text-sm hover:bg-muted"
               key={item.id}
               onClick={() =>
-                queryClient.setQueryData<NotificationItem[]>(NOTIFICATION_KEYS.board(boardId), items.map((entry) =>
+                queryClient.setQueryData<NotificationItem[]>(
+                  NOTIFICATION_KEYS.board(boardId),
+                  items.map((entry) =>
                     entry.id === item.id ? { ...entry, read: true } : entry,
-                  ))
+                  ),
+                )
               }
             >
               {item.message}

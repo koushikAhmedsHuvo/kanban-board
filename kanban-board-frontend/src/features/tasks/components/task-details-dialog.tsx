@@ -50,7 +50,9 @@ export function TaskDetailsDialog({
             <div className="grid gap-3 text-sm">
               {editingUsers.length > 0 && (
                 <p className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-amber-700 dark:text-amber-300">
-                  {editingUsers.join(", ")} {editingUsers.length === 1 ? "is" : "are"} editing this task...
+                  {editingUsers.join(", ")}{" "}
+                  {editingUsers.length === 1 ? "is" : "are"} editing this
+                  task...
                 </p>
               )}
               <p>
