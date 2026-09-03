@@ -1,30 +1,13 @@
 "use client";
-
 import Link from "next/link";
 import { ArrowLeft, RefreshCw } from "lucide-react";
-
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { InviteMemberDialog } from "@/features/board-members/components/invite-member-dialog";
 import { useAuth } from "@/hooks/use-auth";
-import { DeleteBoardDialog } from "@/features/boards/components/delete-board-dialog";
-import { UpdateBoardDialog } from "@/features/boards/components/update-board-dialog";
 import { useBoard } from "@/features/boards/hooks/use-board";
-
-export default function BoardDetailsPage({ params }: { params: { boardId: string } }) {
-  const query = useBoard(params.boardId);
-  const { user } = useAuth();
-  const board = query.data;
-  const isOwner = Boolean(board && user && board.owner.id === user.id);
-
-  if (query.isLoading) {
-    return <main className="mx-auto max-w-4xl px-6 py-10"><Skeleton className="mb-8 h-10 w-72" /><div className="grid gap-4 md:grid-cols-3"><Skeleton className="h-28" /><Skeleton className="h-28" /><Skeleton className="h-28" /></div></main>;
-  }
-
-  if (query.isError || !board) {
-    return <main className="mx-auto max-w-4xl px-6 py-10"><div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center"><h1 className="font-semibold">We couldn&apos;t load this board</h1><Button className="mt-5" variant="outline" onClick={() => query.refetch()}><RefreshCw />Retry</Button></div></main>;
-  }
-
-  return <main className="min-h-screen bg-background px-6 py-10"><div className="mx-auto max-w-4xl"><Link className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground" href="/boards"><ArrowLeft className="size-4" />Back to boards</Link><header className="mt-8 flex flex-wrap items-end justify-between gap-5 border-b pb-6"><div><p className="text-sm text-muted-foreground">Board details</p><h1 className="mt-2 text-3xl font-semibold tracking-tight">{board.name}</h1></div>{isOwner && <div className="flex flex-wrap gap-2"><Link href={`/boards/${board.id}/members`}><Button variant="outline">Members</Button></Link><InviteMemberDialog boardId={board.id} /><UpdateBoardDialog boardId={board.id} currentName={board.name} /><DeleteBoardDialog boardId={board.id} /></div>}</header><div className="mt-8 grid gap-4 sm:grid-cols-3"><Card><CardHeader><CardTitle className="text-sm font-medium text-muted-foreground">Owner</CardTitle></CardHeader><CardContent className="text-lg font-semibold">{board.owner.name}</CardContent></Card><Card><CardHeader><CardTitle className="text-sm font-medium text-muted-foreground">Members</CardTitle></CardHeader><CardContent className="text-3xl font-semibold">{board.memberCount}</CardContent></Card><Card><CardHeader><CardTitle className="text-sm font-medium text-muted-foreground">Columns</CardTitle></CardHeader><CardContent className="text-3xl font-semibold">{board.columnCount}</CardContent></Card></div></div></main>;
-}
+import { useColumns } from "@/features/columns/hooks/use-columns";
+import { useMembers } from "@/features/board-members/hooks/use-members";
+import { CreateColumnDialog } from "@/features/columns/components/create-column-dialog";
+import { KanbanBoard } from "@/features/columns/components/kanban-board";
+export default function BoardPage({ params }: { params: { boardId: string } }) { const board = useBoard(params.boardId); const columns = useColumns(params.boardId); const members = useMembers(params.boardId); const { user } = useAuth(); const isOwner = Boolean(board.data && user && board.data.owner.id === user.id); const currentMember = members.data?.find((member) => member.user.id === user?.id); const canManage = currentMember?.role === "OWNER" || currentMember?.role === "EDITOR"; if (board.isLoading) return <main className="mx-auto max-w-6xl px-6 py-10"><Skeleton className="h-10 w-72" /><Skeleton className="mt-8 h-64 w-full" /></main>; if (board.isError || !board.data) return <main className="mx-auto max-w-4xl px-6 py-10"><div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center"><h1 className="font-semibold">We couldn&apos;t load this board</h1><Button className="mt-5" variant="outline" onClick={() => board.refetch()}><RefreshCw />Retry</Button></div></main>; return <main className="min-h-screen bg-background px-6 py-10"><div className="mx-auto max-w-6xl"><Link className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground" href="/boards"><ArrowLeft className="size-4" />Back to boards</Link><header className="mt-8 flex flex-wrap items-end justify-between gap-5 border-b pb-6"><div><p className="text-sm text-muted-foreground">Board workspace</p><h1 className="mt-2 text-3xl font-semibold tracking-tight">{board.data.name}</h1><p className="mt-2 text-sm text-muted-foreground">{board.data.memberCount} members</p></div><div className="flex flex-wrap gap-2"><Link href={`/boards/${params.boardId}/members`}><Button variant="outline">Members</Button></Link>{isOwner && <InviteMemberDialog boardId={params.boardId} />}</div></header><section className="pt-8"><div className="mb-5 flex items-center justify-between"><h2 className="text-lg font-semibold">Columns</h2>{canManage && <CreateColumnDialog boardId={params.boardId} />}</div>{columns.isError ? <div className="rounded-xl border border-destructive/30 bg-destructive/5 p-8 text-center"><p className="font-medium">We couldn&apos;t load the columns.</p><Button className="mt-4" variant="outline" onClick={() => columns.refetch()}><RefreshCw />Retry</Button></div> : <KanbanBoard boardId={params.boardId} columns={columns.data} isLoading={columns.isLoading} canManage={canManage} emptyAction={canManage ? <CreateColumnDialog boardId={params.boardId} /> : undefined} />}</section></div></main>; }

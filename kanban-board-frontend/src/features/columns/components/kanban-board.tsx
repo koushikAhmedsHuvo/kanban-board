@@ -1,0 +1,9 @@
+"use client";
+import { DndContext, closestCenter, type DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import type { Column } from "../types/column.types";
+import { useMoveColumn } from "../hooks/use-move-column";
+import { ColumnCard } from "./column-card";
+import { ColumnsSkeleton } from "./columns-skeleton";
+import { EmptyColumn } from "./empty-column";
+export function KanbanBoard({ boardId, columns, isLoading, canManage, emptyAction }: { boardId: string; columns?: Column[]; isLoading: boolean; canManage: boolean; emptyAction?: React.ReactNode }) { const move = useMoveColumn(boardId); function handleDragEnd(event: DragEndEvent) { const { active, over } = event; if (!over || active.id === over.id || !columns) return; const from = columns.findIndex((column) => column.id === active.id); const to = columns.findIndex((column) => column.id === over.id); if (from < 0 || to < 0) return; const next = [...columns]; const [moving] = next.splice(from, 1); next.splice(to, 0, moving); const before = next[to - 1]?.position; const after = next[to + 1]?.position; const targetPosition = before === undefined ? Math.max(1, (after ?? 1000) - 500) : after === undefined ? before + 1000 : Math.floor((before + after) / 2); if (targetPosition === moving.position) return; move.mutate({ columnId: moving.id, targetPosition }); } if (isLoading) return <ColumnsSkeleton />; if (!columns?.length) return <EmptyColumn canManage={canManage} action={emptyAction} />; return <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}><SortableContext items={columns.map((column) => column.id)} strategy={horizontalListSortingStrategy}><div className="flex min-h-64 gap-4 overflow-x-auto pb-4">{columns.map((column) => <ColumnCard key={column.id} column={column} boardId={boardId} canManage={canManage} />)}</div></SortableContext></DndContext>; }
