@@ -1,0 +1,115 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum BoardRole {
+  OWNER
+  EDITOR
+  VIEWER
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+
+  ownedBoards  Board[]
+  memberships  BoardMember[]
+  createdTasks Task[]   @relation("TaskCreator")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Board {
+  id        String @id @default(uuid())
+  name      String
+
+  ownerId   String
+  owner     User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  members   BoardMember[]
+  columns   Column[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([ownerId])
+  @@map("boards")
+}
+
+model BoardMember {
+  id        String    @id @default(uuid())
+
+  boardId   String
+  userId    String
+
+  role      BoardRole @default(VIEWER)
+
+  board     Board @relation(fields: [boardId], references: [id], onDelete: Cascade)
+  user      User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([boardId, userId])
+  @@index([userId])
+
+  @@map("board_members")
+}
+
+model Column {
+  id        String @id @default(uuid())
+
+  boardId   String
+  board     Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  title     String
+
+  // Gap-based ordering:
+  // 1000, 2000, 3000 ...
+  position  Int
+
+  tasks     Task[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([boardId, position])
+  @@index([boardId, position])
+
+  @@map("columns")
+}
+
+model Task {
+  id          String @id @default(uuid())
+
+  columnId    String
+  column      Column @relation(fields: [columnId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+
+  // Gap-based ordering:
+  // 1000, 2000, 3000 ...
+  position    Int
+
+  createdById String?
+  createdBy   User? @relation("TaskCreator", fields: [createdById], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@unique([columnId, position])
+  @@index([columnId, position])
+  @@index([createdById])
+
+  @@map("tasks")
+}
