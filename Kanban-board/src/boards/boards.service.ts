@@ -22,10 +22,15 @@ export class BoardsService {
 
   async getBoardDetails(boardId: string, userId: string) {
     const board = await this.validateBoardAccess(boardId, userId);
+    const membership = await this.boardsRepository.findMembership(
+      boardId,
+      userId,
+    );
     return {
       id: board.id,
       name: board.name,
       owner: board.owner,
+      role: membership?.role,
       memberCount: board._count.members,
       columnCount: board._count.columns,
       createdAt: board.createdAt,

@@ -1,4 +1,4 @@
-import { Skeleton } from "@/components/ui/skeleton";
+import { MemberSkeleton } from "@/components/loading/member-skeleton";
 import type { BoardMember } from "../types/member.types";
 import { MemberCard } from "./member-card";
 const rank = { OWNER: 0, EDITOR: 1, VIEWER: 2 };
@@ -18,9 +18,7 @@ export function MembersList({
   if (isLoading)
     return (
       <div className="grid gap-3">
-        {[1, 2, 3].map((item) => (
-          <Skeleton className="h-20" key={item} />
-        ))}
+        {[1, 2, 3].map((item) => <MemberSkeleton key={item} />)}
       </div>
     );
   return (

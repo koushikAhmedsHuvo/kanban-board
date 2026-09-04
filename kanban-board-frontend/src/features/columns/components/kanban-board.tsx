@@ -9,7 +9,7 @@ import {
 import type { Column } from "../types/column.types";
 import { useMoveColumn } from "../hooks/use-move-column";
 import { ColumnCard } from "./column-card";
-import { ColumnsSkeleton } from "./columns-skeleton";
+import { ColumnSkeleton } from "@/components/loading/column-skeleton";
 import { EmptyColumn } from "./empty-column";
 import { useMoveTask } from "@/features/tasks/hooks/use-move-task";
 import type { Task } from "@/features/tasks/types/task.types";
@@ -89,7 +89,12 @@ export function KanbanBoard({
     }
     moveTask.mutate({ taskId: String(active.id), targetColumnId, targetIndex });
   }
-  if (isLoading) return <ColumnsSkeleton />;
+  if (isLoading)
+    return (
+      <div className="flex min-h-64 gap-4 overflow-x-auto pb-4">
+        {[1, 2, 3].map((item) => <ColumnSkeleton key={item} />)}
+      </div>
+    );
   if (!columns?.length)
     return <EmptyColumn canManage={canManage} action={emptyAction} />;
   const visibleColumns =

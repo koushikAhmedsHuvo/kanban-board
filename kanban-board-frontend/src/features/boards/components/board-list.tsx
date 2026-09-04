@@ -1,5 +1,5 @@
 import { BoardCard } from "./board-card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { BoardSkeleton } from "@/components/loading/board-skeleton";
 import type { Board } from "../types/board.types";
 export function BoardList({
   boards,
@@ -10,11 +10,7 @@ export function BoardList({
 }) {
   if (isLoading)
     return (
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {[1, 2, 3].map((item) => (
-          <Skeleton className="h-36" key={item} />
-        ))}
-      </div>
+      <BoardSkeleton />
     );
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">

@@ -1,4 +1,5 @@
 "use client";
+import { useState } from "react";
 import { LoaderCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -8,6 +9,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 export function ConfirmDialog({
   open,
@@ -17,24 +19,30 @@ export function ConfirmDialog({
   confirmLabel = "Confirm",
   loading,
   onConfirm,
+  trigger,
 }: {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   title: string;
   description: string;
   confirmLabel?: string;
   loading?: boolean;
   onConfirm: () => void;
+  trigger?: React.ReactNode;
 }) {
+  const [internalOpen, setInternalOpen] = useState(false);
+  const dialogOpen = open ?? internalOpen;
+  const setOpen = onOpenChange ?? setInternalOpen;
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={dialogOpen} onOpenChange={setOpen}>
+      {trigger && <DialogTrigger render={trigger as React.ReactElement} />}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)}>
+          <Button variant="outline" onClick={() => setOpen(false)}>
             Cancel
           </Button>
           <Button variant="destructive" disabled={loading} onClick={onConfirm}>

@@ -1,8 +1,9 @@
 "use client";
 
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "@/lib/toast";
+import { toastError, toastSuccess } from "@/lib/toast";
 
+import { getErrorMessage } from "@/lib/error-handler";
 import { login } from "../api/login";
 import { useAuthStore } from "@/store/auth.store";
 
@@ -15,10 +16,10 @@ export function useLogin() {
     onSuccess: (data) => {
       setToken(data.accessToken);
       setUser(data.user);
-      toast.success("Welcome back");
+      toastSuccess("Welcome back");
     },
     onError: (error) => {
-      toast.error(error instanceof Error ? error.message : "Unable to log in");
+      toastError(getErrorMessage(error));
     },
   });
 }

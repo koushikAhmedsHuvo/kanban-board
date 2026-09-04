@@ -7,7 +7,7 @@ export interface BoardOwner {
 export interface Board {
   id: string;
   name: string;
-  role: BoardRole;
+  role?: BoardRole;
   owner: BoardOwner;
   createdAt: string;
   updatedAt: string;

@@ -32,7 +32,7 @@ The checked-in `.env.production` file is a placeholder only. Replace its value t
 - `src/app`: App Router pages and route boundaries
 - `src/features`: domain features for auth, boards, members, columns, tasks, and search
 - `src/components`: shared UI, loading, error, theme, and dialog primitives
-- `src/lib`: Axios, query client, toast, analytics, and utility modules
+- `src/lib`: Axios, query client, toast, and utility modules
 - `src/test`: Vitest setup and component/behavior tests
 - `e2e`: Playwright smoke tests
 

@@ -2,7 +2,8 @@
 import { useState } from "react";
 import type { Task } from "../types/task.types";
 import { useColumnTasks } from "../hooks/use-column-tasks";
-import { TaskSkeleton } from "./task-skeleton";
+import { TaskSkeleton } from "@/components/loading/task-skeleton";
+import { QueryError } from "@/components/error/query-error";
 import { EmptyTask } from "./empty-task";
 import { SortableTask } from "./sortable-task";
 import dynamic from "next/dynamic";
@@ -30,11 +31,7 @@ export function TaskList({
   const tasks = useTaskSearch(query.data ?? [], search ?? "");
   if (query.isLoading) return <TaskSkeleton />;
   if (query.isError)
-    return (
-      <p className="rounded-lg bg-destructive/10 p-3 text-sm text-destructive">
-        Unable to load tasks.
-      </p>
-    );
+    return <QueryError message="Unable to load tasks." onRetry={query.refetch} />;
   if (!tasks.length)
     return <EmptyTask canManage={canManage} action={createAction} />;
   return (

@@ -1,11 +1,12 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@/lib/toast";
+import { toastError, toastInfo, toastSuccess } from "@/lib/toast";
 import { updateTask } from "../api/update-task";
 import { TASK_KEYS } from "./use-column-tasks";
 export function useUpdateTask(columnId: string) {
   const client = useQueryClient();
   return useMutation({
+    onMutate: () => toastInfo("Updating Task..."),
     mutationFn: ({
       taskId,
       title,
@@ -18,8 +19,8 @@ export function useUpdateTask(columnId: string) {
     onSuccess: (data) => {
       client.setQueryData(TASK_KEYS.task(data.id), data);
       client.invalidateQueries({ queryKey: TASK_KEYS.column(columnId) });
-      toast.success("Task updated");
+      toastSuccess("Task Updated");
     },
-    onError: () => toast.error("Unable to update task"),
+    onError: () => toastError("Unable to update task"),
   });
 }

@@ -1,16 +1,17 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@/lib/toast";
+import { toastError, toastInfo, toastSuccess } from "@/lib/toast";
 import { deleteColumn } from "../api/delete-column";
 import { COLUMN_KEYS } from "./use-columns";
 export function useDeleteColumn(boardId: string) {
   const client = useQueryClient();
   return useMutation({
+    onMutate: () => toastInfo("Deleting Column..."),
     mutationFn: deleteColumn,
     onSuccess: () => {
       client.invalidateQueries({ queryKey: COLUMN_KEYS.board(boardId) });
-      toast.success("Column deleted");
+      toastSuccess("Column Deleted");
     },
-    onError: () => toast.error("Cannot delete non-empty column"),
+    onError: () => toastError("Cannot delete non-empty column"),
   });
 }

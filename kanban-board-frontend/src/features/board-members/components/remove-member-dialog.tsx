@@ -1,16 +1,8 @@
 "use client";
 import { useState } from "react";
-import { LoaderCircle, Trash2 } from "lucide-react";
+import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/dialogs/confirm-dialog";
 import type { BoardMember } from "../types/member.types";
 import { useRemoveMember } from "../hooks/use-remove-member";
 export function RemoveMemberDialog({
@@ -25,38 +17,5 @@ export function RemoveMemberDialog({
   function remove() {
     mutation.mutate(member.id, { onSuccess: () => setOpen(false) });
   }
-  return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger
-        render={
-          <Button
-            variant="ghost"
-            size="icon"
-            aria-label={`Remove ${member.user.name}`}
-          >
-            <Trash2 />
-          </Button>
-        }
-      />
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Remove this member?</DialogTitle>
-          <DialogDescription>This action cannot be undone.</DialogDescription>
-        </DialogHeader>
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancel
-          </Button>
-          <Button
-            variant="destructive"
-            disabled={mutation.isPending}
-            onClick={remove}
-          >
-            {mutation.isPending && <LoaderCircle className="animate-spin" />}
-            Remove
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
-  );
+  return <ConfirmDialog open={open} onOpenChange={setOpen} title="Remove this member?" description="This action cannot be undone." confirmLabel="Remove" loading={mutation.isPending} onConfirm={remove} trigger={<Button variant="ghost" size="icon" aria-label={`Remove ${member.user.name}`}><Trash2 /></Button>} />;
 }

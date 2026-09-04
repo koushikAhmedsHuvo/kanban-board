@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { LoginForm } from "@/features/auth/components/login-form";
 
 export default function LoginPage() {
@@ -13,6 +15,11 @@ export default function LoginPage() {
           </h1>
           <p className="text-sm text-muted-foreground">
             Sign in to continue to your workspace.
+          </p>
+          <p className="text-sm">
+            <Link className="text-muted-foreground underline underline-offset-4" href="/">
+              Back to home
+            </Link>
           </p>
         </div>
         <LoginForm />

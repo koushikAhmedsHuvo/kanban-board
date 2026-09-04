@@ -1,6 +1,6 @@
 "use client";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "@/lib/toast";
+import { toastError, toastInfo, toastSuccess } from "@/lib/toast";
 import { moveTask } from "../api/move-task";
 import { TASK_KEYS } from "./use-column-tasks";
 import type { Task } from "../types/task.types";
@@ -17,6 +17,7 @@ export function useMoveTask() {
       targetIndex: number;
     }) => moveTask(taskId, { targetColumnId, targetIndex }),
     onMutate: async ({ taskId, targetColumnId, targetIndex }) => {
+      toastInfo("Moving Task...");
       const snapshots = new Map<string, Task[]>();
       const queries = client.getQueriesData<Task[]>({ queryKey: ["tasks"] });
       for (const [key, value] of queries) {
@@ -43,9 +44,9 @@ export function useMoveTask() {
       context?.snapshots.forEach((value, key) =>
         client.setQueryData(JSON.parse(key) as readonly unknown[], value),
       );
-      toast.error("Unable to move task");
+      toastError("Unable to move task");
     },
-    onSuccess: () => toast.success("Task moved"),
+    onSuccess: () => toastSuccess("Task Moved"),
     onSettled: () => client.invalidateQueries({ queryKey: ["tasks"] }),
   });
 }

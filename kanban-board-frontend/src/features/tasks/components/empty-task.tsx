@@ -1,3 +1,4 @@
+import { NoTasks } from "@/components/empty/no-tasks";
 export function EmptyTask({
   canManage,
   action,
@@ -5,10 +6,5 @@ export function EmptyTask({
   canManage: boolean;
   action?: React.ReactNode;
 }) {
-  return (
-    <div className="rounded-lg border border-dashed p-5 text-center text-sm text-muted-foreground">
-      <p>No Tasks Yet</p>
-      {canManage && <div className="mt-3">{action}</div>}
-    </div>
-  );
+  return <NoTasks action={canManage ? action : undefined} />;
 }

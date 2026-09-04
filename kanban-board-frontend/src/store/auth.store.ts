@@ -29,6 +29,10 @@ export const useAuthStore = create<AuthState>()(
       setUser: (user) => set({ user }),
       setToken: (token) => {
         setAuthCookie(token);
+        if (typeof window !== "undefined") {
+          if (token) localStorage.setItem("auth-token", token);
+          else localStorage.removeItem("auth-token");
+        }
         set({ token });
       },
       setRestoring: (isRestoring) => set({ isRestoring }),

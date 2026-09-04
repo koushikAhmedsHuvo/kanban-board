@@ -2,6 +2,8 @@ import axios from "axios";
 
 import { env } from "@/env";
 import { useAuthStore } from "@/store/auth.store";
+import { getErrorMessage } from "@/lib/error-handler";
+import { toastError } from "@/lib/toast";
 
 export const apiClient = axios.create({
   baseURL: env.NEXT_PUBLIC_API_URL,
@@ -26,9 +28,23 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response?.status === 401 && typeof window !== "undefined") {
+    const status = error.response?.status;
+    const requestUrl = String(error.config?.url ?? "");
+    const isAuthAttempt =
+      requestUrl.includes("/auth/login") ||
+      requestUrl.includes("/auth/register");
+
+    if (typeof window !== "undefined" && status === 401 && !isAuthAttempt) {
       useAuthStore.getState().logout();
-      window.location.assign("/login");
+      if (!window.location.pathname.startsWith("/login")) {
+        window.location.assign("/login");
+      }
+    } else if (
+      typeof window !== "undefined" &&
+      error.config?.method?.toLowerCase() === "get" &&
+      status !== 401
+    ) {
+      toastError(getErrorMessage(error));
     }
 
     return Promise.reject(error);

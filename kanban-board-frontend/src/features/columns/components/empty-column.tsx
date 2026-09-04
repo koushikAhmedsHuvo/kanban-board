@@ -1,4 +1,4 @@
-import { LayoutList } from "lucide-react";
+import { NoColumns } from "@/components/empty/no-columns";
 export function EmptyColumn({
   canManage,
   action,
@@ -6,11 +6,5 @@ export function EmptyColumn({
   canManage: boolean;
   action?: React.ReactNode;
 }) {
-  return (
-    <div className="flex min-h-48 min-w-72 flex-col items-center justify-center rounded-xl border border-dashed p-6 text-center">
-      <LayoutList className="mb-3 size-7 text-muted-foreground" />
-      <p className="font-medium">No Columns Yet</p>
-      {canManage && <div className="mt-4">{action}</div>}
-    </div>
-  );
+  return <NoColumns action={canManage ? action : undefined} />;
 }

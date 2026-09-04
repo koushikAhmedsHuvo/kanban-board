@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import { RegisterForm } from "@/features/auth/components/register-form";
 
 export default function RegisterPage() {
@@ -13,6 +15,11 @@ export default function RegisterPage() {
           </h1>
           <p className="text-sm text-muted-foreground">
             Set up your workspace access in a moment.
+          </p>
+          <p className="text-sm">
+            <Link className="text-muted-foreground underline underline-offset-4" href="/">
+              Back to home
+            </Link>
           </p>
         </div>
         <RegisterForm />
