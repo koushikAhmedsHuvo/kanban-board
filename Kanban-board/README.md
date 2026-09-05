@@ -37,6 +37,20 @@ NestJS backend scaffold using PostgreSQL, Prisma ORM, and Swagger.
    npm run start:dev
    ```
 
+Build and start all services:
+
+docker compose up --build
+
+Run in detached mode:
+
+docker compose up -d --build
+
+Stop services:
+
+docker compose down
+
+
+
 The API runs on `http://localhost:8000`.
 
 Swagger documentation is available at `http://localhost:8000/v1/api/docs`.

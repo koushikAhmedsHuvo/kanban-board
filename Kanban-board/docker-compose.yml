@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: kanban-postgres
+
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: kanban-board
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: kanban-api
+
+    restart: unless-stopped
+
+    depends_on:
+      - postgres
+
+    ports:
+      - "8000:8000"
+
+    environment:
+      DATABASE_URL: postgresql://postgres:password@postgres:5432/kanban-board?schema=public
+      PORT: 8000
+      JWT_SECRET: replace-with-a-long-random-secret
+      JWT_EXPIRES_IN: 7d
+
+volumes:
+  postgres_data:
